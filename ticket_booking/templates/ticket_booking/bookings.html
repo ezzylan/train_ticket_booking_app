@@ -1,0 +1,13 @@
+{% extends "ticket_booking/base.html" %} {% block title %}Bookings - {% endblock title %} {% block content %}
+<h1 class="pb-4">My Bookings</h1>
+
+{% if bookings %} {% for booking in bookings %}
+<div class="card">
+	<div class="card-body d-flex justify-content-between align-items-center">
+		<h4 class="card-title">Booking {{booking.id}}</h4>
+        <a href="{% url "booking" booking.id %}" class="btn btn-primary stretched-link">Open</a>
+	</div>
+</div>
+{% endfor %} {% else %}
+<p>No bookings found.</p>
+{% endif %} {% endblock content %}

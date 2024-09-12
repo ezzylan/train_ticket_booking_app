@@ -1,0 +1,25 @@
+<div id="trains" class="pt-5 pb-4 w-100">
+	<h2 class="pb-2">Trains from {{origin}} to {{destination}}</h2>
+
+	{% if trains %}
+	<div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-4">
+		{% for train in trains %}
+		<div class="col">
+            <a href={% url "train" train.number %} class="text-decoration-none text-reset">
+				<div class="card">
+					<div class="card-body">
+						<h5 class="card-title">Train {{train.number}}</h5>
+						<p class="card-text d-flex flex-column">
+							<span>Depart at {{train.departure_time}}</span>
+							<span>Arrive at {{train.arrival_time}}</span>
+						</p>
+					</div>
+				</div>
+			</a>
+		</div>
+		{% endfor %}
+	</div>
+	{% else %}
+	<p>No trains found.</p>
+	{% endif %}
+</div>

@@ -1,0 +1,23 @@
+{% extends "ticket_booking/base.html" %}
+
+{% block title %}Booking {{booking.id}} - {% endblock title %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center pb-4">
+    <h1>Booking {{booking.id}}</h1>
+    <h5>Total Amount: RM{{booking.total_amount}}</h5>
+</div>
+
+<h4>Train {{booking.train.number}} ({{booking.train.origin}} - {{booking.train.destination}})</h4>
+
+<ul>
+    <li>Departure: {{booking.train.departure_date}}, {{booking.train.departure_time}}</li>
+    <li>Arrival: {{booking.train.arrival_date}}, {{booking.train.arrival_time}}</li>
+    <li>Booked seats:
+        {% for seat in booking.seats.all %}
+            {{seat.coach.letter}}{{seat.number}},
+        {% endfor %}
+    </li>
+</ul>
+{% endblock content %}

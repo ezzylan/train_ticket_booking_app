@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>
+			{% block title %}{% endblock title %}EZTrain
+		</title>
+		<script src="https://unpkg.com/htmx.org@2.0.2" integrity="sha384-Y7hw+L/jvKeWIRRkqWYfPcvVxHzVzn5REgzbawhxAuQGwX1XWe70vji+VSeHOThJ" crossorigin="anonymous"></script>
+		<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    </head>
+	</head>
+
+	{% load bootstrap5 %}
+	{% load bootstrap_icons %}
+	{% bootstrap_css %}
+	{% bootstrap_javascript %}
+	{% bootstrap_messages %}
+
+	<body class="bg-body-secondary">
+		<nav
+			class="navbar navbar-light bg-light"
+		>
+			<div class="container">
+				<a class="navbar-brand" href="{% url "index" %}">EZTrain</a>
+
+				{% if user.is_authenticated %}
+				<div class="dropdown">
+					<button
+						class="btn btn-secondary dropdown-toggle"
+						type="button"
+						id="triggerId"
+						data-bs-toggle="dropdown"
+						aria-haspopup="true"
+						aria-expanded="false"
+					>
+					{% bs_icon 'person' %} {{ user.username }}
+					</button>
+
+					<div class="dropdown-menu dropdown-menu-start" aria-labelledby="triggerId">
+						<a class="dropdown-item" href="{% url "bookings" user.id %}">
+							My Bookings
+						</a>
+						<a class="dropdown-item" href="{% url "logout" %}">
+							Logout
+						</a>
+					</div>
+				</div>
+				{% else %}
+				<button
+					type="button"
+					class="btn btn-primary"
+					data-bs-toggle="modal"
+					data-bs-target="#loginModal"
+				>
+					Login
+				</button>
+
+				<div
+					class="modal fade"
+					id="loginModal"
+					tabindex="-1"
+
+					role="dialog"
+					aria-labelledby="loginModalTitle"
+					aria-hidden="true"
+				>
+					<div
+						class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-sm"
+						role="document"
+					>
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="loginModalTitle">
+									Login Form
+								</h5>
+								<button
+									type="button"
+									class="btn-close"
+									data-bs-dismiss="modal"
+									aria-label="Close"
+								></button>
+							</div>
+
+							<div class="modal-body">
+								<form action="{% url "login" %}" method="post">
+									{% csrf_token %}
+									<div class="mb-3">
+										<label for="username" class="form-label">Username</label>
+										<input type="text" class="form-control" id="username" name="username" required>
+									</div>
+									<div class="mb-3">
+										<label for="password" class="form-label">Password</label>
+										<input type="password" class="form-control" id="password" name="password" required>
+									</div>
+									<button type="submit" class="btn btn-primary">Login</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				{% endif %}
+			</div>
+		</nav>
+
+
+		<main class="container py-4">{% block content %}{% endblock content %}</main>
+	</body>
+</html>

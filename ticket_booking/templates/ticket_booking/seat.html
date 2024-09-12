@@ -1,0 +1,20 @@
+{% load bootstrap_icons %}
+
+{% comment %} {{selected_seats}} {% endcomment %}
+
+<button
+	hx-put="{% url "update_seat" seat.id %}" hw-swap="outerHTML"
+	type="button" class="btn btn-secondary"
+	@click="updateSelectedSeats('{{seat.coach.letter}}{{seat.number}}')"
+	{% if seat.is_locked and seat.user_id_locked != user.id %} disabled {% endif %}
+>
+	{% if seat.is_booked %}
+		{% bs_icon 'lock' %}
+	{% elif seat.is_locked and seat.user_id_locked == user.id %}
+		{% bs_icon 'person-check' %}
+	{% elif seat.is_locked and seat.user_id_locked != user.id %}
+		{% bs_icon 'lock' %}
+	{% else %}
+		{% bs_icon 'person' %}
+	{% endif %}
+</button>

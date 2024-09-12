@@ -1,0 +1,137 @@
+{% extends "ticket_booking/base.html" %} {% block title %}Train {{train_number}}
+- {% endblock title %} {% block content %}
+
+<div x-data="{
+    selectedSeats: {{selected_seats}},
+    showToast: false, message: '', seatPrice: 2,
+    updateSelectedSeats(seat) {
+        if (this.selectedSeats.includes(seat)) {
+            console.log('deleting', seat)
+            this.selectedSeats = this.selectedSeats.filter(selectedSeat => selectedSeat !== seat)
+        } else {
+            console.log('adding', seat)
+            this.selectedSeats.push(seat)
+        }
+    }
+}">
+	<div class="pb-4 d-flex justify-content-between align-items-center">
+		<h1>Train {{train_number}} ({{origin}} - {{destination}})</h1>
+		<button
+			type="button"
+			class="btn btn-primary"
+			data-bs-toggle="modal"
+			data-bs-target="#confirmBookingModal"
+		>
+			Book
+		</button>
+	</div>
+
+	<div class="row row-cols-1 row-cols-sm-2 row-cols-xl-4 g-4">
+		{% for coach in coaches %}
+		<div class="col">
+			<div class="card">
+				<div class="card-header">Coach {{coach.letter}}</div>
+
+				<div
+					class="card-body row row-cols-4 gap-2 d-flex justify-content-center align-items-center"
+				>
+					{% for seat in coach.seats.all %}
+                    {% include 'ticket_booking/seat.html'%}
+                    {% endfor %}
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+
+	<div
+		class="modal fade"
+		id="confirmBookingModal"
+		tabindex="-1"
+		role="dialog"
+		aria-labelledby="confirmBookingModal"
+		aria-hidden="true"
+	>
+		<div
+			class="modal-dialog modal-dialog-scrollable modal-dialog-centered modal-sm"
+			role="document"
+		>
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="confirmBookingModal">
+						Do you wish to proceed with the payment?
+					</h5>
+					<button
+						type="button"
+						class="btn-close"
+						data-bs-dismiss="modal"
+						aria-label="Close"
+					></button>
+				</div>
+
+				<div class="modal-body">
+					<p>
+						Selected seats: <span x-text="selectedSeats"></span>
+					</p>
+					<p>Total amount: RM<span x-text="selectedSeats.length * 2"></span></p>
+				</div>
+
+				<div class="modal-footer">
+					<button
+						type="button"
+						class="btn btn-secondary"
+						data-bs-dismiss="modal"
+					>
+						Close
+					</button>
+					<button type="button" class="btn btn-primary" hx-post="{% url "payment" %}">
+						Proceed
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div
+		aria-live="polite"
+		aria-atomic="true"
+		class="d-flex justify-content-center align-items-center"
+		style="min-height: 200px"
+	>
+		<div
+			class="toast"
+			role="alert"
+			aria-live="assertive"
+			aria-atomic="true"
+			x-bind:class="{ 'show': showToast, 'hide': !showToast }"
+		>
+			<div class="toast-header">
+				<strong class="me-auto">Error</strong>
+				<button
+					type="button"
+					class="ms-2 mb-1 close"
+					data-dismiss="toast"
+					aria-label="Close"
+					x-on:click="showToast = false"
+				></button>
+			</div>
+			<div class="toast-body" x-text="message"></div>
+		</div>
+	</div>
+</div>
+
+<script>
+	document.body.addEventListener("htmx:responseError", function (evt) {
+		if (evt.detail.xhr.status === 401) {
+			document.querySelector("body").__x.$data.showToast = true;
+			document.querySelector("body").__x.$data.message =
+				"You are not authorised to execute this action.";
+
+			setTimeout(() => {
+				document.querySelector("body").__x.$data.showToast = false;
+			}, 3000);
+		}
+	});
+</script>
+
+{% endblock content %}
