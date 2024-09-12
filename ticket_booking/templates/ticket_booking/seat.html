@@ -1,7 +1,5 @@
 {% load bootstrap_icons %}
 
-{% comment %} {{selected_seats}} {% endcomment %}
-
 <button
 	hx-put="{% url "update_seat" seat.id %}" hw-swap="outerHTML"
 	type="button" class="btn btn-secondary"
